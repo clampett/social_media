@@ -5,7 +5,6 @@
  *
  */
 public class Post {
-	
 	private String title;
 	private String author;
 	private String text;

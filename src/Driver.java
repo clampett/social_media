@@ -10,6 +10,6 @@ public class Driver
 
 
 		System.out.println(Tokenizer.countTargetWords("hello hello goodbye", "godbye"));
-		
+		System.out.println(Tokenizer.mostUsedTopic("DoritosDoritosBaconBaconBacon"));
 	}
 }

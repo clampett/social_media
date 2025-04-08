@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
+import javafx.stage.Stage; 
 
 /**
  * A GUI that will simulate Social Media posts to test an application
@@ -110,11 +110,13 @@ public class SocialMediaGUI extends Application {
 		// Create the Buttons and place in HBoxes
 		Button btnStart = new Button("Start");
 		Button btnClear = new Button("Clear");
-		Button btnExit = new Button("Exit");	
+		Button btnExit = new Button("Exit");
+		Button btnShowMedia = new Button("Show Media");
 		
 		btnStart.setOnAction(event -> startFeed());
-		btnClear.setOnAction(event -> postEngine.loadContent("")); 
+		btnClear.setOnAction(event -> postEngine.loadContent(""));
 		btnExit.setOnAction(event -> Platform.exit());
+		//btnShowMedia.setOnAction(event -> startMedia());
 
 		HBox buttonBox = new HBox(5, btnStart, btnClear, btnExit);
 
@@ -123,7 +125,7 @@ public class SocialMediaGUI extends Application {
 
 		
 		// Create a box for the media feed
-		VBox mediaBox = new VBox(5, this.lblMedia, this.mediaFeed);
+		VBox mediaBox = new VBox(5, this.lblMedia, btnShowMedia, this.mediaFeed);
 
 		// Add both VBoxes to the HBox (mainPane)
 		mainPane.getChildren().add(postBox);
@@ -200,6 +202,5 @@ public class SocialMediaGUI extends Application {
 	}
 	
 	/*******************************************************************/
-	
 	
 }
