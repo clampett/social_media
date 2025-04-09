@@ -1,4 +1,5 @@
 import java.io.File;
+import java.net.URI;
 
 public class Video extends MediaItem {
     private File vid;
@@ -10,5 +11,9 @@ public class Video extends MediaItem {
 
     public File getFile() {
         return this.vid;
+    }
+
+    public URI toURI() {
+        return this.vid.toURI();
     }
 }

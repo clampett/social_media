@@ -1,4 +1,5 @@
 import java.io.File;
+import java.net.URI;
 
 public class Song extends MediaItem {
     private File sng;
@@ -16,5 +17,9 @@ public class Song extends MediaItem {
 
     public String getArtist() {
         return this.artist;
+    }
+
+    public URI toURI() {
+        return this.sng.toURI();
     }
 }

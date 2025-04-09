@@ -1,4 +1,5 @@
 import java.io.File;
+import java.net.URI;
 
 public class Image extends MediaItem {
     private File img;
@@ -10,5 +11,9 @@ public class Image extends MediaItem {
 
     public File getFile() {
         return this.img;
+    }
+
+    public URI toURI() {
+        return this.img.toURI();
     }
 }
