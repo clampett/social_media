@@ -1,6 +1,12 @@
-
 import java.time.LocalDate;
 
+/**
+ * Event represents a public event on social media and is a subclass of {@link MediaItem}.
+ * All Events have a location and a {@code LocalDate} date.
+ * 
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/9/2025
+ */
 public class Event extends MediaItem {
     private String location;
     private LocalDate date;

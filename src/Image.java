@@ -1,6 +1,14 @@
 import java.io.File;
 import java.net.URI;
 
+/**
+ * Image represents an image on social media and is a subclass of {@link MediaItem}.
+ * All Images have a {@code File} containing the an image.
+ * {@code URI} is accessed with {@link Image#toURI() toURI()}.
+ * 
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/9/2025
+ */
 public class Image extends MediaItem {
     private File img;
 

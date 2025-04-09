@@ -1,6 +1,14 @@
 import java.io.File;
 import java.net.URI;
 
+/**
+ * Song represents a playable music file on social media and is a subclass of {@link MediaItem}.
+ * All Songs have {@code File} containing the music file.
+ * {@code URI} is accessed with {@link Song#toURI() toURI()}.
+ * 
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/9/2025
+ */
 public class Song extends MediaItem {
     private File sng;
     private String artist;

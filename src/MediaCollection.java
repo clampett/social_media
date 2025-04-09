@@ -1,5 +1,11 @@
 import java.util.HashMap;
 
+/**
+ * MediaCollection contains each {@link Topic Topic's} corresponding {@link MediaItem}, which is stored in a {@code HashMap}.
+ * 
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/9/2025
+ */
 public class MediaCollection {
     private HashMap<Topic, MediaItem> media;
 

@@ -1,6 +1,13 @@
 import java.net.URI;
 import java.net.URL;
 
+/**
+ * Ad represents an advertisement on social media and is a subclass of {@link MediaItem}.
+ * All Ads include a {@code URL} to a website. 
+ * 
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/9/2025
+ */
 public class Ad extends MediaItem {
     private URL url;
 
