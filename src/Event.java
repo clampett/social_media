@@ -24,4 +24,10 @@ public class Event extends MediaItem {
     public LocalDate getDate() {
         return date;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+               "<p>" + location + "\n" + date + "</p>";
+    }
 }

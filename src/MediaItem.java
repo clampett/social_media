@@ -20,4 +20,10 @@ public abstract class MediaItem {
     public String getDescription() {
         return this.description;
     }
+
+    @Override
+    public String toString() {
+        return "<h2>" + this.title + "</h>" +
+                "<p>" + this.description + "</p>";
+    }
 }

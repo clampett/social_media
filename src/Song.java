@@ -30,4 +30,11 @@ public class Song extends MediaItem {
     public URI toURI() {
         return this.sng.toURI();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() +
+               "<audio controls autoplay><source src='" + sng.toURI() +   
+               "' type='audio/mp3' />" + "Your browser does not support the audio element.</audio>" + "by " + artist; 
+    }
 }

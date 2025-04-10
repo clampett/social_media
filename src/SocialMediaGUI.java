@@ -1,4 +1,4 @@
-
+import java.time.LocalTime;
 import java.util.ArrayList;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -10,8 +10,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage; 
-
+import javafx.stage.Stage;
+import javafx.application.Platform;
 /**
  * A GUI that will simulate Social Media posts to test an application
  * to create ads.
@@ -116,7 +116,7 @@ public class SocialMediaGUI extends Application {
 		btnStart.setOnAction(event -> startFeed());
 		btnClear.setOnAction(event -> postEngine.loadContent(""));
 		btnExit.setOnAction(event -> Platform.exit());
-		//btnShowMedia.setOnAction(event -> startMedia());
+		btnShowMedia.setOnAction(event -> startMediaFeed());
 
 		HBox buttonBox = new HBox(5, btnStart, btnClear, btnExit);
 
@@ -202,5 +202,65 @@ public class SocialMediaGUI extends Application {
 	}
 	
 	/*******************************************************************/
-	
+	/**
+	 * StartMediaFeed for the Show Media button to create a Media Feed Thread?
+	 */
+	public void startMediaFeed(){
+		Runnable mediaTask = new Runnable()
+		{
+			public void run()
+			{
+				runMediaFeedTask();
+			}
+		};
+
+		Thread mediaThread = new Thread(mediaTask);
+		mediaThread.setDaemon(true);
+		mediaThread.start();
+	}
+
+	/**
+	 * runMediaFeedTask method for the startMediaFeed method
+	 */
+	public void runMediaFeedTask()
+	{
+		int i = 0;
+		//update every 3 secs
+		while (i < NUMBER_OF_POSTS * (5/4)) { //at most 15
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				break;
+			}
+			updateMediaFeed(++i);
+		}
+	}
+
+	/**
+	 * 
+	 * @param trendingTopic
+	 * @param count
+	 */
+	public void updateMediaFeed(int count)
+	{
+		String status = "Getting media " + count + " in thread " + Thread.currentThread().getName();
+		MediaCollection mc = new MediaCollection();
+
+		Platform.runLater(new Runnable(){
+			public void run()
+			{
+				String postHTML = (String) postEngine.executeScript("document.documentElement.outerHTML");
+				String mostUsed = Tokenizer.mostUsedTopic(postHTML);
+				MediaItem item = mc.getMedia().get(Topic.valueOf(mostUsed));
+
+				String mediaContent = (String) mediaEngine.executeScript("document.documentElement.outerHTML")
+										+ item.toString() + 
+										"<hr>" + LocalTime.now() + "<hr />";
+				
+				mediaEngine.loadContent(mediaContent);
+				lblMedia.setText(status);
+			}
+		});
+	}
 }

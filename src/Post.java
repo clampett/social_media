@@ -91,9 +91,4 @@ public class Post {
 	           "<em>" + this.author + "</em>" +
 				"<p>" + this.text + "</p><hr />";
 	}
-	
-	
-	
-	
-	
 }

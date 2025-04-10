@@ -24,4 +24,11 @@ public class Video extends MediaItem {
     public URI toURI() {
         return this.vid.toURI();
     }
+    
+    @Override
+    public String toString() {
+        return super.toString() +
+               "<video width='300' autoplay><source src='" + vid.toURI() +   
+               "' type='video/mp4' />" + "Your browser does not support the video element.</video>";
+    }
 }

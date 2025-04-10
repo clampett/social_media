@@ -24,4 +24,11 @@ public class Image extends MediaItem {
     public URI toURI() {
         return this.img.toURI();
     }
+
+    @Override
+    public String toString() {
+        return "<h2>" + super.getTitle() + "</h2>" +
+               "<figure><img src='" + img.toURI() + "' />" + 
+               "<figcaption>" + super.getDescription() + "</figcaption></figure>";
+    }
 }

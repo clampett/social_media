@@ -1,4 +1,5 @@
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -23,5 +24,16 @@ public class Ad extends MediaItem {
 
     public URL getURL() {
         return this.url;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return super.toString() + 
+                "<a href='" + url.toURI() + "'>" + url + "</a>";
+        } catch(URISyntaxException e) {
+            e.printStackTrace();
+            return "<p>" + url.toString() + "</p>";
+        }
     }
 }

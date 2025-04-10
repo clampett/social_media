@@ -7,7 +7,7 @@ import java.util.HashMap;
  * @version 4/9/2025
  */
 public class MediaCollection {
-    private HashMap<Topic, MediaItem> media;
+    private HashMap<Topic, MediaItem> media = new HashMap<>();
 
     public MediaCollection() {
         this.media.put(Topic.Bacon, new Image("Bacon", "a slice", "assets/bacon.jpg"));
