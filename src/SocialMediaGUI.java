@@ -11,256 +11,196 @@ import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.application.Platform;
+
 /**
- * A GUI that will simulate Social Media posts to test an application
- * to create ads.
+ * SocialMediaGUI simulates a social media platform, with both written and media posts simulated.
+ * Written posts are randomized, while media posts are based upon the most discussed {@link Topic}
+ * in the the written posts.
  * 
- * @author Jack Myers
- *
+ * @author Saadat Emilbekova, Dylan Jablonski, Jason Mele
+ * @version 4/15/2025
+ * @see MediaItem MediaItem - a super class of all media posts
+ * @see Post Post - written posts to be randomized
  */
 public class SocialMediaGUI extends Application {
 
-	public static void main(String[] args) {
-		Application.launch(args);
-	}
+    private WebView postFeed = new WebView();
+    private WebView mediaFeed = new WebView();
 
-	// GUI elements involved in actions
-	/**
-	 * JavaFX WebView into which social media posts will appear
-	 */
-	private WebView postFeed = new WebView();
-	
-	/**
-	 * JavaFX WebView into which we will add relevant media objects (events, ads, quizzes)
-	 */
-	private WebView mediaFeed = new WebView();
-	
-	/**
-	 * the engine for the WebView control that displays post.  Needed to interact with its content
-	 */
-	private WebEngine postEngine = postFeed.getEngine();
-	
-	/**
-	 * the engine for the WebView control that displays media.  Needed to interact with its content
-	 */
-	private WebEngine mediaEngine = mediaFeed.getEngine();
+    private WebEngine postEngine = postFeed.getEngine();
+    private WebEngine mediaEngine = mediaFeed.getEngine();
 
-	/**
-	 * interactive label to show status
-	 */
-	private Label lblStatus = new Label("Post Feed Not Started...");
-	
-	/**
-	 * interactive label to show status
-	 */
-	private Label lblMedia = new Label("Media Feed Not Started...");
+    private Label lblStatus = new Label("Post Feed Not Started...");
+    private Label lblMedia = new Label("Media Feed Not Started...");
 
-	/**
-	 * the number of posts to generate in simulation
-	 */
-	private static final int NUMBER_OF_POSTS = 12;
-	
-	/**
-	 * the start method of the JavaFX GUI
-	 */
-	@Override
-	public void start(final Stage mainStage) {
-		HBox root = new HBox();     			// make container to hold controls
-		styleMainPane(root);					// set the style of the main pane
-		setupControls(root);                    // initialize and place controls
-		Scene scene = new Scene(root,600,800); 	// Setup the main scene
-		setStage(mainStage, scene);             // Finalize and show the stage 		
-	}
+    private static final int NUMBER_OF_POSTS = 12;
+    private String lastTopic = "";  
 
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
 
-	/**
-	 * Add style to the main pane of the GUI
-	 * 
-	 * @param root	the root node of the stage
-	 */
-	private void styleMainPane(Pane root) {
-		root.setStyle("-fx-padding: 10;" +
-				"-fx-border-style: solid inside;" +
-				"-fx-border-width: 2;" +
-				"-fx-border-insets: 5;" +
-				"-fx-border-radius: 5;" +
-				"-fx-border-color: blue;" +
-				"-fx-background-color: aliceblue");  		
-	}
-	
-	/**
-	 * Set up any controls not needed by the event handlers
-	 * 
-	 * @param mainPane 	the root node of the stage
-	 */
-	private void setupControls(Pane mainPane) {
-		// Set properties of controls that are instance variables
-		postFeed.setPrefHeight(800);
-		postFeed.setPrefWidth(400);
-		mediaFeed.setPrefHeight(800);
-		mediaFeed.setPrefWidth(400);
-		
-		postEngine.setUserStyleSheetLocation("data:,body { font: 10px Arial; }");
-		
-		// Set label heights to allow multi-line labels
-		lblStatus.setMinHeight(30);
-		lblMedia.setMinHeight(30);
-		
-		// Create the Buttons and place in HBoxes
-		Button btnStart = new Button("Start");
-		Button btnClear = new Button("Clear");
-		Button btnExit = new Button("Exit");
-		Button btnShowMedia = new Button("Show Media");
-		
-		btnStart.setOnAction(event -> startFeed());
-		btnClear.setOnAction(event -> postEngine.loadContent(""));
-		btnExit.setOnAction(event -> Platform.exit());
-		btnShowMedia.setOnAction(event -> startMediaFeed());
+    @Override
+    public void start(final Stage mainStage) {
+        HBox root = new HBox();
+        styleMainPane(root);
+        setupControls(root);
+        Scene scene = new Scene(root, 600, 800);
+        setStage(mainStage, scene);
+    }
 
-		HBox buttonBox = new HBox(5, btnStart, btnClear, btnExit);
+    /**
+     * Stylizes the supplied pane
+     * 
+     * @param root Layout Pane to style
+     */
+    private void styleMainPane(Pane root) {
+        root.setStyle("-fx-padding: 10;" +
+                "-fx-border-style: solid inside;" +
+                "-fx-border-width: 2;" +
+                "-fx-border-insets: 5;" +
+                "-fx-border-radius: 5;" +
+                "-fx-border-color: blue;" +
+                "-fx-background-color: aliceblue");
+    }
 
-		// Create a box for the social media feeds
-		VBox postBox = new VBox(5, this.lblStatus, buttonBox, this.postFeed);
+    /**
+     * Sets up the user controls
+     * 
+     * @param mainPane Layout pane to add controls to
+     */
+    private void setupControls(Pane mainPane) {
+        postFeed.setPrefHeight(800);
+        postFeed.setPrefWidth(400);
+        mediaFeed.setPrefHeight(800);
+        mediaFeed.setPrefWidth(400);
 
-		
-		// Create a box for the media feed
-		VBox mediaBox = new VBox(5, this.lblMedia, btnShowMedia, this.mediaFeed);
+        postEngine.setUserStyleSheetLocation("data:,body { font: 10px Arial; }");
 
-		// Add both VBoxes to the HBox (mainPane)
-		mainPane.getChildren().add(postBox);
-		mainPane.getChildren().add(mediaBox);
-		
-	}
+        lblStatus.setMinHeight(30);
+        lblMedia.setMinHeight(30);
 
-	/** Sets up the stage and shows (launches) it
-	 * 
-	 * @param mainStage		the window to launch
-	 * @param scene			the scene that holds the contents of the window (stage)
-	 */
-	private void setStage(Stage mainStage, Scene scene) {
-    	mainStage.setTitle("A Social Media Simulation");
-    	mainStage.setScene(scene);
-    	mainStage.show();			
-	}
+        Button btnStart = new Button("Start");
+        Button btnClear = new Button("Clear");
+        Button btnExit = new Button("Exit");
+        Button btnShowMedia = new Button("Show Media");
 
-	/**
-	 * This is the method that will run as the action when the Start button is
-	 * pressed. It will start a new Thread that will act independently of the
-	 * Thread on which the GUI is running.
-	 * 
-	 */
-	private void startFeed() {
-		
-		// Create a task 
-		Runnable task = new Runnable() {
-			public void run() {
-				runTaskToSimulatePosts();
-			}
-		};
+        btnStart.setOnAction(event -> startFeed());
+        btnClear.setOnAction(event -> {
+            postEngine.loadContent("");
+            lastTopic = "";
+        });
+        btnExit.setOnAction(event -> Platform.exit());
+        btnShowMedia.setOnAction(event -> startMediaFeed());
 
-		// Run the task in a background thread
-		Thread backgroundThread = new Thread(task);
-		// Terminate the running thread if the application exits
-		backgroundThread.setDaemon(true);
-		// Start the thread
-		backgroundThread.start();
-	}
+        HBox buttonBox = new HBox(5, btnStart, btnClear, btnExit);
+        VBox postBox = new VBox(5, lblStatus, buttonBox, postFeed);
+        VBox mediaBox = new VBox(5, lblMedia, btnShowMedia, mediaFeed);
 
-	/**
-	 * This method will use the PostGenerator to create a list of sample posts.
-	 */
-	private void runTaskToSimulatePosts() {
-		// First get the ten postings
-		ArrayList<Post> samplePosts = PostGenerator.generatePosts(NUMBER_OF_POSTS);
-		for (int i = 0; i < NUMBER_OF_POSTS; i++) {
-			try {
-				// Get the Status
-				String status = "Getting post " + (i+1) + " of " + NUMBER_OF_POSTS + " in thread " + 
-								Thread.currentThread().getName();
-				Post samplePost = samplePosts.get(i);
-				
-				// Now, interact with controls on the JavaFx Application Thread
-				Platform.runLater(new Runnable() {
-		            @Override 
-		            public void run() {
-		            	lblStatus.setText(status);
-		            	String content = (String) 
-		            			postEngine.executeScript("document.documentElement.outerHTML");
-						postEngine.loadContent(content + samplePost);
-		            }
-		        });
+        mainPane.getChildren().addAll(postBox, mediaBox);
+    }
 
-				// Take a 2-3 second break
-				Thread.sleep(2000 + (int) (Math.random() * 1000));
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	/*******************************************************************/
-	/**
-	 * StartMediaFeed for the Show Media button to create a Media Feed Thread?
-	 */
-	public void startMediaFeed(){
-		Runnable mediaTask = new Runnable()
-		{
-			public void run()
-			{
-				runMediaFeedTask();
-			}
-		};
+    /**
+     * Sets the supplied {@code Stage} to the supplied {@code Scene}
+     * 
+     * @param mainStage {@code Stage} to be set
+     * @param scene {@code Scene} to be shown
+     */
+    private void setStage(Stage mainStage, Scene scene) {
+        mainStage.setTitle("A Social Media Simulation");
+        mainStage.setScene(scene);
+        mainStage.show();
+    }
 
-		Thread mediaThread = new Thread(mediaTask);
-		mediaThread.setDaemon(true);
-		mediaThread.start();
-	}
+    /**
+     * Creates and runs {@link SocialMediaGUI#runTaskToSimulatePosts() runTaskToSimulatePosts()} on a new {@code Thread}
+     */
+    private void startFeed() {
+        Runnable task = this::runTaskToSimulatePosts;
+        Thread backgroundThread = new Thread(task);
+        backgroundThread.setDaemon(true);
+        backgroundThread.start();
+    }
 
-	/**
-	 * runMediaFeedTask method for the startMediaFeed method
-	 */
-	public void runMediaFeedTask()
-	{
-		int i = 0;
-		//update every 3 secs
-		while (i < NUMBER_OF_POSTS * (5/4)) { //at most 15
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				break;
-			}
-			updateMediaFeed(++i);
-		}
-	}
+    /**
+     * Simulates posts being made on a social media platform.
+     * @see PostGenerator
+     * @see Post
+     */
+    private void runTaskToSimulatePosts() {
+        ArrayList<Post> samplePosts = PostGenerator.generatePosts(NUMBER_OF_POSTS);
+        for (int i = 0; i < NUMBER_OF_POSTS; i++) {
+            try {
+                String status = "Getting post " + (i + 1) + " of " + NUMBER_OF_POSTS +
+                        " in thread " + Thread.currentThread().getName();
+                Post samplePost = samplePosts.get(i);
 
-	/**
-	 * 
-	 * @param trendingTopic
-	 * @param count
-	 */
-	public void updateMediaFeed(int count)
-	{
-		String status = "Getting media " + count + " in thread " + Thread.currentThread().getName();
-		MediaCollection mc = new MediaCollection();
+                Platform.runLater(() -> {
+                    lblStatus.setText(status);
+                    String currentHTML = (String) postEngine.executeScript("document.body.innerHTML");
+                    postEngine.loadContent("<html><body>" + currentHTML + samplePost + "</body></html>");
+                });
 
-		Platform.runLater(new Runnable(){
-			public void run()
-			{
-				String postHTML = (String) postEngine.executeScript("document.documentElement.outerHTML");
-				String mostUsed = Tokenizer.mostUsedTopic(postHTML);
-				MediaItem item = mc.getMedia().get(Topic.valueOf(mostUsed));
+                Thread.sleep(2000 + (int) (Math.random() * 1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-				String mediaContent = (String) mediaEngine.executeScript("document.documentElement.outerHTML")
-										+ item.toString() + 
-										"<hr>" + LocalTime.now() + "<hr />";
-				
-				mediaEngine.loadContent(mediaContent);
-				lblMedia.setText(status);
-			}
-		});
-	}
+    /**
+     * Creates and runs {@link SocialMediaGUI#runMediaFeedTask() runMediaFeedTask()} on a new {@code Thread}
+     */    
+    private void startMediaFeed() {
+        Runnable mediaTask = this::runMediaFeedTask;
+        Thread mediaThread = new Thread(mediaTask);
+        mediaThread.setDaemon(true);
+        mediaThread.start();
+    }
+
+    /**
+     * A loop to manage the timing and count of the number of {@link MediaItem MediaItems} displayed
+     */
+    private void runMediaFeedTask() {
+        int i = 0;
+        while (i < NUMBER_OF_POSTS * (5 / 4)) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            updateMediaFeed(++i);
+        }
+    }
+
+    /**
+     * Simulates the media being posted on a social media platform.
+     * It will check the posts and find the most talked about subject. It will then display
+     * media related to that subject.
+     * 
+     * @param count current number of {@link MediaItem MediaItems} displayed
+     */
+    private void updateMediaFeed(int count) {
+        String status = "Getting media " + count + " in thread " + Thread.currentThread().getName();
+        MediaCollection mc = new MediaCollection();
+
+        Platform.runLater(() -> {
+            String postHTML = (String) postEngine.executeScript("document.documentElement.outerHTML");
+            String mostUsed = Tokenizer.mostUsedTopic(postHTML);
+
+            if (!mostUsed.equals("nothing was found") && !mostUsed.equals(lastTopic)) {
+                try {
+                    MediaItem item = mc.getMedia().get(Topic.valueOf(mostUsed));
+                    String mediaContent = item.toString() +
+                            "<hr><span style='font-size: x-small;'>" + LocalTime.now() + "</span><hr />";
+                    mediaEngine.loadContent("<html><body>" + mediaContent + "</body></html>");
+                    lblMedia.setText(status);
+                    lastTopic = mostUsed;
+                } catch (Exception e) {
+                    System.out.println(" Could not load media for: " + mostUsed);
+                }
+            }
+        });
+    }
 }
